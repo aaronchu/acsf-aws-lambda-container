@@ -1,50 +1,47 @@
-# `acsf-aws-static-website` Terraform Module
+# `acsf-aws-lambda-container` Terraform Module
 
 ## Purpose
 
-Establish a static website hosted on AWS at minimal cost and complexity.
+Lambda function using containers hosted in ECR. Lambda is allowed to access SSM Parameter Store at a given prefix.
 
 ## Inputs
 
 | Variable | Type | Example | Description |
 | - | - | - | - |
-| `bucket_name` | `string` | `my-website-bucket` | (required) The name of the S3 bucket to create. |
-| `primary_fqdn` | `string` | `mydomainname.com` | (required) The primary FQDN for the website. |
-| `alternative_fqdn` | `string` | `www.mydomainname.com` | The alternative FQDN for the website (needs to be in the same zone as the primary FQDN). Default value is empty. |
-| `dns_zone_name` | `string` | `mydomainname.com` |(required) The name of the DNS zone to create. |
+| `environment_name` | `string` | `production` | (required) The environment where this lambda exists. |
+| `function_name` | `string` | `my-function` | (required) The name of the Lambda function. |
+| `image_uri` | `string` | `123456789012.dkr.ecr.us-west-2.amazonaws.com/my-container:latest` | (required) The URI of the container image in ECR. |
+| `timeout` | `number` | `30` |(optional) The amount of time that Lambda allows a function to run before stopping it. Default 15 sec. |
+| `memory_size` | `number` | `256` |(optional) The amount of memory to allocate to the function at runtime. Default 128 MB. |
+| `environment_variables` | `map(string)` | `{NAME="value"}` |(optional) A map of environment variables for the Lambda function. |
+| `tags` | `map(string)` | `{application="my-app"}` |(optional) The name of the DNS zone to create. |
+
+## Outputs
+
+| Variable | Type | Example | Description |
+| - | - | - | - |
+| `lambda_function_arn` | `string` | `arn:aws:lambda:us-west-2:123456789012:function:my-function` | The ARN of the Lambda function. |
 
 ## Usage
 
 Using the module:
 
 ```
-module "static_website" {
-  source           = "git::https://github.com/aaronchu/acsf-aws-static-website.git"
-  primary_fqdn     = "mydomainname.com"
-  alternative_fqdn = "www.mydomainname.com"
-  dns_zone_name    = "mydomainname.com"
-  bucket_name      = "mydomainname-static-website"
+module "lambda" {
+  source           = "git::https://github.com/aaronchu/acsf-aws-lambda-container.git"
 
-  providers = {
-    aws = aws.use1 # required for everything to work (set this provider up in us-east-1)
+  function_name = "my-function"
+  image_uri     = "123456789012.dkr.ecr.us-west-2.amazonaws.com/my-container:latest"
+  timeout       = 60
+  memory_size   = 256
+  environment_variables = {
+    DB_HOST     = "initial_fqdn"
+    DB_NAME     = "mydata"
+    DB_USER     = "initial_user"
+    DB_PASSWORD = "initial"
+    DB_PORT     = "5432"
   }
-
-  depends_on = [module.zones] # optional, if you set up your zones elsewhere
-}
-```
-
-To create a provider in `us-east-1`:
-
-```
-provider "aws" {
-  alias               = "use1"
-  region              = "us-east-1"
-  allowed_account_ids = ["YOUR_ACCOUNT_ID"]
-  assume_role {
-    role_arn     = "arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_TERRAFORM_ROLE"
-    session_name = "Terraform"
-    duration     = "1h"
-  }
+  environment_name = var.environment_name
 }
 ```
 
