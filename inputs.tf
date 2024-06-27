@@ -25,12 +25,6 @@ variable "memory_size" {
   default     = 128
 }
 
-variable "environment_variables" {
-  description = "A map of environment variables for the Lambda function."
-  type        = map(string)
-  default     = {}
-}
-
 variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)
