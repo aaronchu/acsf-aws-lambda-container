@@ -25,6 +25,12 @@ variable "memory_size" {
   default     = 128
 }
 
+variable "environment_variables" {
+  description = "Initial set of environment variables."
+  type        = map(string)
+  default     = {}
+}
+
 variable "tags" {
   description = "A map of tags to assign to the resources."
   type        = map(string)

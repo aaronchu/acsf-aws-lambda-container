@@ -13,6 +13,7 @@ Lambda function using containers hosted in ECR. Lambda is allowed to access SSM 
 | `image_uri` | `string` | `123456789012.dkr.ecr.us-west-2.amazonaws.com/my-container:latest` | (required) The URI of the container image in ECR. |
 | `timeout` | `number` | `30` |(optional) The amount of time that Lambda allows a function to run before stopping it. Default 15 sec. |
 | `memory_size` | `number` | `256` |(optional) The amount of memory to allocate to the function at runtime. Default 128 MB. |
+| `environment_variables` | `map(string)` | `{setting="123"}` |(optional) Initial set of environment variables. These are created in SSM Parameter Store, and you adjust the values manually in the console. |
 | `tags` | `map(string)` | `{application="my-app"}` |(optional) The name of the DNS zone to create. |
 
 ## Outputs
