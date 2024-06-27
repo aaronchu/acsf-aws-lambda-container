@@ -28,7 +28,7 @@ Using the module:
 
 ```
 module "lambda" {
-  source           = "git::https://github.com/aaronchu/acsf-aws-lambda-container.git"
+  source           = "git::https://github.com/aaronchu/acsf-aws-lambda-container.git?ref=v0.1.0"
 
   function_name = "my-function"
   image_uri     = "123456789012.dkr.ecr.us-west-2.amazonaws.com/my-container:latest"
